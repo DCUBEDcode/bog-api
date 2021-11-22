@@ -1,18 +1,17 @@
 import { Request, Response } from 'express';
 
-import { v4 as uuidv4 } from 'uuid';
-import { UserInstance } from '../model';
+import { User } from '../models/user';
 
 class UserController {
   async createUser(req: Request, res: Response) {
-    const id = uuidv4();
     try {
-      const record = await UserInstance.create({
+      const user = await User.create({
         ...req.body,
-        id
       })
-      return res.json({ record, msg: 'Successfully created User'});
+
+      return res.json({ user, msg: 'Successfully created User'});
     } catch (e) {
+      console.log(e);
       return res.json({ msg: 'Failed to create user', status: 500, route: '/user' })
     }
   }
@@ -21,7 +20,7 @@ class UserController {
     try {
       const limit = req.query?.limit as number | undefined;
       const offset = req.query?.offset as number | undefined;
-      const records = await UserInstance.findAll({where: {}, limit, offset})
+      const records = await User.findAll({where: {}, limit, offset})
       return res.json(records);
     } catch (e) {
       return res.json({ msg: 'Failed to read users', status: 500, route: '/user' })
@@ -31,7 +30,7 @@ class UserController {
   async getUser(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const user = await UserInstance.findOne({ where: { id } });
+      const user = await User.findOne({ where: { id } });
       return res.json(user);
     } catch (e) {
       return res.json({ msg: `Failed to find user with id: ${id}`, status: 500, route: '/user' })
@@ -41,7 +40,7 @@ class UserController {
   async deleteUser(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const user = await UserInstance.findOne({ where: { id } });
+      const user = await User.findOne({ where: { id } });
 
       if (!user) {
         return res.json({ msg: 'Can not find existing user'})
@@ -58,6 +57,5 @@ class UserController {
     }
   }
 }
-
 
 export default new UserController();

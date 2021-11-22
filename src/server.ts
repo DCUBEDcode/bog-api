@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import db from './config/database.config';
 
-import usersRouter from './users/route';
+import usersRouter from './routes/user';
 
 db.sync().then(() => {
   console.log('connect to db');
